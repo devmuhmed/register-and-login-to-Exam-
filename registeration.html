@@ -1,0 +1,256 @@
+<html>
+    <head>
+        <title>Registeration</title>
+    </head>
+    <style>
+        table{
+            width: 700px;
+            padding: 5px;
+            margin: 40px auto;
+            background-color: #f2f2f2;
+            border: 3px solid #b0c2d2;
+            text-align: center;
+        }
+        span{
+            display: none;
+        }
+        input{
+            border: 2px solid #b0c2d2;
+        }
+        input[type="text"],input[type="password"]{
+            width: 500px;
+        }
+        input[type="reset"],input[type="submit"]{
+            padding:5px 20px;
+            margin-left: 50px;
+            margin-right: 50px;
+            color: red;
+        }
+        .error{
+            border: 3px solid red;
+        }
+        .success{
+            border: 3px solid green;
+        }
+    </style>
+    <body>
+        <form action="login.html">
+            <table>
+                <tr>
+                    <td rowspan="2">User Name</td>
+                    <td>
+                        <input type="text"  id="username">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span id="userNameError">Username must be letters only between 6 or 8 charachter</span>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="2">User Password</td>
+                    <td>
+                        <input type="password"  id="userpass">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span id="userPasswordError">Your Password must be Number only between 6 or 8 digits</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2">Password Confirmation</td>
+                    <td>
+                        <input type="password"  id="confirmpass">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span id="confirmPasswordError">this password not match with previous shouldn't equal null</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2">Email</td>
+                    <td>
+                        <input type="text"  id="useremail">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span id="userEmailError">Must Be enter a real Email</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Gender</td>
+                    <td>
+                        <input type="radio" name="gender" value="male">Male
+                        <input type="radio" name="gender"  value="female">Female
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="submit" value="Submit" id="btn_ok">
+                        <input type="reset" value="Cancel" id="btn_cancel">
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <script>
+            window.addEventListener('load',function(){
+                //to prevent rightclick or use keyboard menue
+                window.oncontextmenu=function(){
+                    alert("You can't display context menue !");
+                    return false;
+                }
+                // inputs from user 
+                username = document.getElementById("username");
+                pass = document.getElementById("userpass");
+                confirmPassword= document.getElementById("confirmpass");
+                email = document.getElementById("useremail");
+                //To make user enter data 
+                username.focus();
+                //spans (error message)
+                var userNameError =document.getElementById("userNameError");
+                var userPasswordError =document.getElementById("userPasswordError");
+                var confirmPasswordError =document.getElementById("confirmPasswordError");
+                var userEmailError = document.getElementById("userEmailError");
+                //validate username text 
+                username.addEventListener('blur',function(){
+                    if(!isusernamevalid()){
+                        username.focus();
+                        username.select();
+                        username.className="error";
+                        userNameError.style.display="block";
+                    }
+                    else{
+                        username.className="success";
+                        userNameError.style.display="none";
+                        pass.focus();
+                    }
+                });//end of username check
+
+                //validate Password text
+                pass.addEventListener('blur',function (){
+                    if(!ispassvalid()){
+                        pass.focus();
+                        pass.select();
+                        pass.className="error";
+                        userPasswordError.style.display="block";
+                    }else{
+                        pass.className="success";
+                        userPasswordError.style.display="none";
+                        confirmPassword.focus();
+                    }
+                });//end of Password check
+
+                //match confirmPassword with pass
+                confirmPassword.addEventListener('blur',function(){
+                    if(!confirmpass()){
+                        confirmPassword.focus();
+                        confirmPassword.select();
+                        confirmPassword.className="error";
+                        confirmPasswordError.style.display="block";
+                    }else{
+                        confirmPassword.className="success";
+                        confirmPasswordError.style.display="none";
+                        email.focus();
+                    }
+                });//end match confirmPassword
+
+                //validate email
+                email.addEventListener('blur',function(){
+                    if(!isemailvalidate()){
+                        email.focus();
+                        email.select();
+                        email.className="error";
+                        userEmailError.style.display="block";
+                    }else{
+                        email.className="success";
+                        userEmailError.style.display="none";
+                    }
+                });//end of validate email
+
+                //register submit and reset event within form 
+                this.document.forms[0].addEventListener('submit',function(e){
+                    document.cookie = "username="+username.value;
+                    document.cookie = "password="+pass.value;
+                    let radio = document.querySelector("input[name=gender]:checked"); 
+                    if(radio === null){
+                        e.preventDefault();
+                        alert("you must check your Gender !")
+                    }else{
+                        document.cookie = "Gender="+radio.value;
+                    }
+                    document.cookie = "Gender="+radio.value;
+                    if (!(isusernamevalid() && ispassvalid() && confirmpass() && isemailvalidate())){
+                        //prevent default
+                        e.preventDefault();
+                        //username 
+                        username.focus();
+                        username.className="error";
+                        userNameError.style.display="block";
+                        //pass
+                        pass.className="error";
+                        userPasswordError.style.display="block";
+                        //confirm
+                        confirmPassword.className="error";
+                        confirmPasswordError.style.display="block";
+                        //email
+                        email.className="error";
+                        userEmailError.style.display="block";
+                    }
+                        
+                }); //end of submit 
+                // register rest
+                this.document.forms[0].addEventListener('reset',function(e){
+                    //prvent default
+                    if (!confirm("are you sure to want to Reset ?")){
+                        e.preventDefault();
+                    }else{
+                        username.focus();
+                    }
+                });//end rest
+            });//end of load event
+
+            //validate function of username
+            function isusernamevalid(){
+                //return true if username.value match /^[A-Za-z]{6,8}$/ regular Expression 
+                var userNamePattern = /^[A-Za-z]{6,8}$/;
+                if (username.value.match(userNamePattern)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }//end of function validate
+
+            //validate function of password
+            function ispassvalid(){
+                var passpattern = /^[0-9]{6,8}$/;
+                if(pass.value.match(passpattern)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }//end of function validate
+
+            //match confirm pass with pass
+            function confirmpass(){
+                if(pass.value != confirmPassword.value || confirmPassword.value == ""){
+                    return false;
+                }else{
+                    return true;
+                }
+            }//end match confirmPassword
+
+            function isemailvalidate(){
+                var emailpattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
+                if(email.value.match(emailpattern)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+    </script>
+    </body>
+</html>

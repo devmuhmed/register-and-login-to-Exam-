@@ -1,0 +1,267 @@
+<html>
+  <head>
+    <title>Quizpage</title>
+  </head>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    .main {
+      width: 900px;
+      height: 400px;
+      background-color: #f2f2f2;
+      border: 3px solid #b0c2d2;
+      margin: 50px auto;
+      position: relative;
+    }
+    .header {
+      /* background-color: red; */
+      width: 100%;
+      height: 15%;
+      margin: 5px auto;
+    }
+    .header div {
+      width: 29%;
+      height: 60%;
+      border: 2px solid #b0c2d2;
+      text-align: center;
+      float: left;
+      margin: 15px 18px;
+      padding-top: 5px;
+      overflow: hidden;
+      color: red;
+      font-family: "Tahoma", Verdana, sans-serif;
+    }
+    #question {
+      margin: 20px auto;
+      width: 96%;
+      height: 55%;
+      border: 2px solid #487dab;
+      background-color: #5b9bd5;
+      color: white;
+      padding: 20px 0 0 20px;
+    }
+    input[value="next"],
+    input[value="Finish"] {
+      position: absolute;
+      right: 18px;
+      padding: 7px 50px;
+      text-transform: capitalize;
+      color: white;
+      background-color: #5b9bd5;
+      border: 2px solid #487dab;
+    }
+    input[value="Finish"] {
+      background-color: red;
+      font-weight: bold;
+      border: 2px solid red;
+      border-radius: 30px;
+    }
+    input[value="previous"] {
+      position: absolute;
+      left: 18px;
+      padding: 7px 50px;
+      text-transform: capitalize;
+      color: white;
+      background-color: #5b9bd5;
+      border: 2px solid #487dab;
+      display: none;
+    }
+  </style>
+  <body>
+    <div class="main">
+      <div class="header">
+        <div id="welcome"></div>
+
+        <div id="quizname"></div>
+
+        <div id="timer"></div>
+      </div>
+      <div id="question">
+        <div id="quiz-header"></div>
+        <div id="quiz-answers"></div>
+      </div>
+      <input type="button" value="next" id="next" />
+
+      <input type="button" value="previous" id="previous" />
+    </div>
+    <script>
+      function quizer() {
+        let currentIndex = 0;
+        let currentAnswer = null;
+        let currentDegree = 0;
+        let questions = [
+          {
+            header: "what is 2*5",
+            answer: [2, 5, 10, 15, 20],
+            correctAnswer: 10,
+            degree: 10,
+          },
+          {
+            header: "what is 2*6",
+            answer: [2, 5, 10, 12, 20],
+            correctAnswer: 12,
+            degree: 10,
+          },
+          {
+            header: "what is 2*7",
+            answer: [2, 5, 14, 12, 20],
+            correctAnswer: 14,
+            degree: 10,
+          },
+          {
+            header: "what is 2*8",
+            answer: [2, 5, 14, 12, 16],
+            correctAnswer: 16,
+            degree: 10,
+          },
+          {
+            header: "what is 2*9",
+            answer: [2, 18, 14, 12, 20],
+            correctAnswer: 18,
+            degree: 10,
+          },
+          {
+            header: "what is 2*10",
+            answer: [2, 5, 14, 12, 20],
+            correctAnswer: 20,
+            degree: 10,
+          },
+          {
+            header: "what is 3*5",
+            answer: [2, 5, 15, 12, 20],
+            correctAnswer: 15,
+            degree: 10,
+          },
+          {
+            header: "what is 3*6",
+            answer: [18, 5, 14, 12, 20],
+            correctAnswer: 18,
+            degree: 10,
+          },
+          {
+            header: "what is 3*7",
+            answer: [2, 5, 21, 12, 20],
+            correctAnswer: 21,
+            degree: 10,
+          },
+          {
+            header: "what is 3*10",
+            answer: [2, 5, 14, 30, 20],
+            correctAnswer: 30,
+            degree: 10,
+          },
+        ];
+
+        render();
+        function next() {
+          currentAnswer = document.querySelector(
+            "input[name='answer']:checked"
+          );
+          if (currentAnswer === null) {
+            alert("Choose answer first");
+            return;
+          }
+          if (currentAnswer.value == questions[currentIndex].correctAnswer) {
+            currentDegree += questions[currentIndex].degree;
+          }
+
+          currentIndex++;
+          if (currentIndex == questions.length - 1) {
+            document.getElementById("next").value = "Finish";
+          }
+          if (currentIndex === questions.length) {
+            return viewResult();
+          }
+          render();
+        }
+        function viewResult() {
+          document.getElementById("question").innerHTML =
+            "<div style ='text-align:center;'>your result is " +
+            currentDegree +
+            "</div>";
+          document.getElementById("timer").style.display = "none";
+          document.getElementById("next").style.display = "none";
+        }
+
+        function render() {
+          const question = questions[currentIndex];
+          document.getElementById("quiz-header").innerHTML = question.header;
+          const answers = question.answer
+            .map(function (i) {
+              return (
+                "<input type='radio' name='answer' value='" + i + "'/>" + i
+              );
+            })
+            .join("<br>");
+            document.getElementById("quiz-answers").innerHTML = answers;
+        }
+
+        function startTimer(duration, display) {
+          var time = duration,
+            minutes,
+            seconds;
+          setInterval(function () {
+            minutes = parseInt(time / 60, 10);
+            seconds = parseInt(time % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            display.innerText = "Timer : " + minutes + ":" + seconds;
+            if (--time < 0) {
+              time = duration;
+              document.getElementById("question").innerHTML =
+                "<div style ='text-align:center;'>your result is " +
+                currentDegree +
+                "</div>";
+              document.getElementById("timer").style.display = "none";
+              document.getElementById("next").style.display = "none";
+            }
+          }, 1000);
+        }
+        return {
+          next,
+          startTimer
+        };
+      }
+
+      //
+      window.addEventListener("load", function () {
+        //to prevent rightclick or use keyboard menue
+        window.oncontextmenu = function () {
+          alert("You can't display context menue !");
+          return false;
+        };
+        //object from class which named by literal object in JavaScript
+        const quiz = new quizer();
+
+        document.getElementById("next").addEventListener("click", function () {
+          //to move the next Question
+          quiz.next();
+        });
+
+        //get cookie
+        cookieone = document.cookie.split(";")[0].split("=")[1];
+        cookiethree = document.cookie.split(";")[2].split("=")[1];
+
+        // to prevent rightclick or use keyboard menue
+        window.oncontextmenu = function () {
+          alert("You can't display context menue !");
+          return false;
+        };
+        welcome = document.getElementById("welcome");
+        welcome.innerText = "Welcome : " + cookieone;
+        quizname = document.getElementById("quizname");
+        quizname.innerText = "Quiz : Javascript";
+        timer = document.getElementById("timer");
+        question = document.getElementById("question");
+        if (!(cookiethree == "male")) {
+          question.style.backgroundColor = "pink";
+        }
+        //timer
+        var halfHour = 60 * 30 ;
+        quiz.startTimer(halfHour, timer);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,174 @@
+<html>
+    <head>
+        <title>Log in </title>
+    </head>
+    <style>
+        table{
+            width: 700px;
+            padding: 5px;
+            margin: 40px auto;
+            background-color: #f2f2f2;
+            border: 3px solid #b0c2d2;
+            text-align: center;
+        }
+        span{
+            display: none;
+        }
+        input{
+            border: 2px solid #b0c2d2;
+        }
+        input[type="text"],input[type="password"]{
+            width: 500px;
+        }
+        input[type="reset"],input[type="submit"]{
+            padding:5px 20px;
+            margin-left: 50px;
+            margin-right: 50px;
+            color: red;
+        }
+        .error{
+            border: 3px solid red;
+        }
+        .success{
+            border: 3px solid green;
+        }
+    </style>
+    <body>
+        <form action="Quizpage_without_any_external.html" >
+            <table>
+                <tr>
+                    <td rowspan="2">User Name</td>
+                    <td>
+                        <input type="text"  id="inputname">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span id="userNameError">Username must be letters only between 6 or 8 charachter</span>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="2">User Password</td>
+                    <td>
+                        <input type="password"  id="inputpass">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span id="userPasswordError">Your Password must be Number only between 6 or 8 digits</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="submit" value="Submit" id="btn_ok">
+                        <input type="reset" value="Cancel" id="btn_cancel">
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <script>
+            window.addEventListener('load',function(){
+                //to prevent rightclick or use keyboard menue
+                window.oncontextmenu=function(){
+                    alert("You can't display context menue !");
+                    return false;
+                }
+
+                // inputs from user 
+                inputname = document.getElementById("inputname");
+                inputpass = document.getElementById("inputpass");
+
+                //To make user enter data 
+                inputname.focus();
+
+                //spans (error message)
+                var userNameError =document.getElementById("userNameError");
+                var userPasswordError =document.getElementById("userPasswordError");
+
+                //validate username text 
+                inputname.addEventListener('blur',function(){
+                    if(!isusernamevalid()){
+                        inputname.focus();
+                        inputname.select();
+                        inputname.className="error";
+                        userNameError.style.display="block";
+                    }
+                    else{
+                        inputname.className="success";
+                        userNameError.style.display="none";
+                        inputpass.focus();
+                    }
+                });//end of username check
+
+                //validate Password text
+                inputpass.addEventListener('blur',function (){
+                    if(!ispassvalid()){
+                        inputpass.focus();
+                        inputpass.select();
+                        inputpass.className="error";
+                        userPasswordError.style.display="block";
+                    }else{
+                        inputpass.className="success";
+                        userPasswordError.style.display="none";
+                    }
+                });//end of Password check
+
+                //register submit and reset event within form 
+                this.document.forms[0].addEventListener('submit',function(e){
+                    cookieone = document.cookie.split(";")[0].split("=")[1];
+                    cookietwo = document.cookie.split(";")[1].split("=")[1];
+                    if (!(cookieone == inputname.value)){
+                        alert('you must Enter your username that you register');
+                        e.preventDefault();
+                    }
+                    if (!(cookietwo == inputpass.value)){
+                        alert('you must Enter your Password that you register');
+                        e.preventDefault();
+                    }
+                    if (!(isusernamevalid() && ispassvalid())){
+                        //prevent default
+                        e.preventDefault();
+                        //username 
+                        inputname.focus();
+                        //pass
+                        inputpass.className="error";
+                        userPasswordError.style.display="block";
+                    }
+                        
+                }); //end of submit 
+                // register rest
+                this.document.forms[0].addEventListener('reset',function(e){
+                    //prvent default
+                    if (!confirm("are you sure to want to Reset ?")){
+                        e.preventDefault();
+                        inputname.focus();
+                    }else{
+                        inputname.focus();
+                    }
+                });//end rest
+            });//end of load event
+
+            //validate function of username
+            function isusernamevalid(){
+                //return true if username.value match /^[A-Za-z]{6,8}$/ regular Expression 
+                var userNamePattern = /^[A-Za-z]{6,8}$/;
+                if (inputname.value.match(userNamePattern)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }//end of function validate
+
+            //validate function of password
+            function ispassvalid(){
+                var passpattern = /^[0-9]{6,8}$/;
+                if(inputpass.value.match(passpattern)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }//end of function validate
+    </script>
+    </body>
+</html>
